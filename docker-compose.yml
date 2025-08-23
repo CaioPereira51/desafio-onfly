@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # Banco de Dados MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: viagem_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: viagem_corporativa
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: viagem_user
+      MYSQL_PASSWORD: viagem_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - viagem_network
+
+  # API Laravel
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: viagem_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/var/www/html
+      - ./api/storage:/var/www/html/storage
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=viagem_corporativa
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - JWT_SECRET=viagem_jwt_secret_key_2024
+      - JWT_TTL=60
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=mailhog
+      - MAIL_PORT=1025
+      - MAIL_USERNAME=null
+      - MAIL_PASSWORD=null
+      - MAIL_ENCRYPTION=null
+      - MAIL_FROM_ADDRESS=noreply@viagem.com
+      - MAIL_FROM_NAME="Sistema de Viagens"
+    depends_on:
+      - mysql
+    networks:
+      - viagem_network
+
+  # Frontend Vue.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: viagem_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VUE_APP_API_URL=http://localhost:8000/api
+    depends_on:
+      - api
+    networks:
+      - viagem_network
+
+  # MailHog para simulação de emails
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: viagem_mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - viagem_network
+
+volumes:
+  mysql_data:
+
+networks:
+  viagem_network:
+    driver: bridge
