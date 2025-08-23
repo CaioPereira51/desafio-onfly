@@ -77,31 +77,6 @@ docker-compose exec api php artisan migrate --seed
 
 ## 🔧 Configuração de Ambiente
 
-### Variáveis de Ambiente (.env)
-```env
-# Database
-DB_CONNECTION=mysql
-DB_HOST=mysql
-DB_PORT=3306
-DB_DATABASE=viagem_corporativa
-DB_USERNAME=root
-DB_PASSWORD=password
-
-# JWT
-JWT_SECRET=your-jwt-secret-key
-JWT_TTL=60
-
-# Mail (para notificações)
-MAIL_MAILER=smtp
-MAIL_HOST=mailhog
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="noreply@viagem.com"
-MAIL_FROM_NAME="Sistema de Viagens"
-```
-
 ## 🧪 Executando Testes
 
 ### Back-end (Laravel)
