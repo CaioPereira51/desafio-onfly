@@ -77,6 +77,10 @@ docker-compose exec api php artisan migrate --seed
 
 ## 🔧 Configuração de Ambiente
 
+### Variáveis de Ambiente (.env)
+
+Configure de acordo com o env.example
+
 ## 🧪 Executando Testes
 
 ### Back-end (Laravel)
