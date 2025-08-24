@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Models\Pedido;
 use App\Services\NotificationService;
 use Carbon\Carbon;
@@ -56,7 +58,8 @@ class PedidoController extends Controller
             $query->byCreationDateRange($criacaoInicio, $criacaoFim);
         }
 
-        $pedidos = $query->orderBy('created_at', 'desc')->paginate(15);
+        $perPage = $request->get('per_page', 15);
+        $pedidos = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         return response()->json([
             'success' => true,
@@ -74,7 +77,7 @@ class PedidoController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'destino' => 'required|string|max:255',
-            'data_ida' => 'required|date|after:today',
+            'data_ida' => 'required|date|after_or_equal:today',
             'data_volta' => 'required|date|after:data_ida',
         ]);
 
@@ -98,6 +101,14 @@ class PedidoController extends Controller
         ]);
 
         $pedido->load('solicitante');
+
+        Log::info('Pedido criado com sucesso', [
+            'pedido_id' => $pedido->id,
+            'solicitante_id' => $user->id,
+            'destino' => $request->destino,
+            'data_ida' => $request->data_ida,
+            'data_volta' => $request->data_volta,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -190,6 +201,13 @@ class PedidoController extends Controller
         $statusAnterior = $pedido->status;
         $pedido->update(['status' => $novoStatus]);
 
+        Log::info('Status do pedido atualizado', [
+            'pedido_id' => $pedido->id,
+            'status_anterior' => $statusAnterior,
+            'novo_status' => $novoStatus,
+            'admin_id' => $user->id,
+        ]);
+
         // Enviar notificação
         $this->notificationService->sendStatusUpdateNotification($pedido, $statusAnterior, $novoStatus);
 
@@ -207,9 +225,13 @@ class PedidoController extends Controller
      */
     public function getStatusOptions()
     {
+        $statusOptions = Cache::remember('pedido_status_options', 3600, function () {
+            return Pedido::getStatusOptions();
+        });
+
         return response()->json([
             'success' => true,
-            'data' => Pedido::getStatusOptions(),
+            'data' => $statusOptions,
         ]);
     }
 }

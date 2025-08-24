@@ -46,10 +46,18 @@ class NotificationService
                 'novo_status' => $novoStatus,
             ]);
 
-        } catch (\Exception $e) {
-            Log::error('Erro ao enviar notificação de status', [
+        } catch (\Illuminate\Mail\Transport\TransportException $e) {
+            Log::error('Erro de transporte ao enviar notificação de status', [
                 'pedido_id' => $pedido->id,
                 'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erro inesperado ao enviar notificação de status', [
+                'pedido_id' => $pedido->id,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ]);
         }
     }
