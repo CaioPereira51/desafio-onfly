@@ -16,6 +16,11 @@ use App\Http\Controllers\PedidoController;
 |
 */
 
+// Rota de teste
+Route::get('test', function () {
+    return response()->json(['message' => 'API funcionando!']);
+});
+
 // Rotas públicas de autenticação
 Route::post('auth/register', [AuthController::class, 'register']);
 Route::post('auth/login', [AuthController::class, 'login']);
