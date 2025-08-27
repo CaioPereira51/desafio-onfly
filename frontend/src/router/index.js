@@ -54,11 +54,22 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const isAuthenticated = authStore.isAuthenticated
 
+  console.log('Router guard:', {
+    to: to.path,
+    isAuthenticated,
+    token: authStore.token,
+    requiresAuth: to.meta.requiresAuth,
+    requiresGuest: to.meta.requiresGuest
+  })
+
   if (to.meta.requiresAuth && !isAuthenticated) {
+    console.log('Redirecionando para login - não autenticado')
     next('/login')
   } else if (to.meta.requiresGuest && isAuthenticated) {
+    console.log('Redirecionando para dashboard - já autenticado')
     next('/dashboard')
   } else {
+    console.log('Navegação permitida')
     next()
   }
 })

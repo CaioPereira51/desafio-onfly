@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useToast } from 'vue-toastification'
 import api from '../services/api'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -8,19 +7,22 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token'))
   const loading = ref(false)
 
-  const toast = useToast()
+  // const toast = useToast()
 
   const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.roles?.some(role => role.name === 'admin'))
 
   const setToken = (newToken) => {
+    console.log('Definindo token:', newToken)
     token.value = newToken
     if (newToken) {
       localStorage.setItem('token', newToken)
       api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
+      console.log('Token salvo no localStorage e headers')
     } else {
       localStorage.removeItem('token')
       delete api.defaults.headers.common['Authorization']
+      console.log('Token removido do localStorage e headers')
     }
   }
 
@@ -31,17 +33,29 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (credentials) => {
     loading.value = true
     try {
+      console.log('Tentando fazer login com:', credentials)
       const response = await api.post('/auth/login', credentials)
-      const { token: newToken, user: userData } = response.data.authorization
+      console.log('Resposta da API:', response.data)
+      
+      if (!response.data.authorization || !response.data.authorization.token) {
+        throw new Error('Token não encontrado na resposta')
+      }
+      
+      const { token: newToken } = response.data.authorization
+      const userData = response.data.user
+      
+      console.log('Token recebido:', newToken)
+      console.log('Dados do usuário:', userData)
       
       setToken(newToken)
       setUser(userData)
       
-      toast.success('Login realizado com sucesso!')
+      // toast.success('Login realizado com sucesso!')
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.message || 'Erro ao fazer login'
-      toast.error(message)
+      console.error('Erro no login:', error)
+      const message = error.response?.data?.message || error.message || 'Erro ao fazer login'
+      // toast.error(message)
       return { success: false, error: message }
     } finally {
       loading.value = false
@@ -52,16 +66,18 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     try {
       const response = await api.post('/auth/register', userData)
-      const { token: newToken, user: userInfo } = response.data.authorization
+      const { token: newToken } = response.data.authorization
+      const userInfo = response.data.user
       
       setToken(newToken)
       setUser(userInfo)
       
-      toast.success('Cadastro realizado com sucesso!')
+      // toast.success('Cadastro realizado com sucesso!')
       return { success: true }
     } catch (error) {
       const message = error.response?.data?.message || 'Erro ao fazer cadastro'
-      toast.error(message)
+      // toast.error(message)
+      console.error('Erro no cadastro:', message)
       return { success: false, error: message }
     } finally {
       loading.value = false
@@ -76,7 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       setToken(null)
       setUser(null)
-      toast.success('Logout realizado com sucesso!')
+      // toast.success('Logout realizado com sucesso!')
     }
   }
 

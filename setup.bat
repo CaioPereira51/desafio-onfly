@@ -81,9 +81,9 @@ if %errorlevel% equ 0 (
     echo ⚠️ API pode não estar respondendo ainda
 )
 
-curl -f http://localhost:8080 >nul 2>&1
+curl -f http://localhost:8081 >nul 2>&1
 if %errorlevel% equ 0 (
-    echo ✅ Frontend rodando em http://localhost:8080
+    echo ✅ Frontend rodando em http://localhost:8081
 ) else (
     echo ⚠️ Frontend pode não estar respondendo ainda
 )
@@ -92,7 +92,7 @@ echo.
 echo 🎉 Setup concluído com sucesso!
 echo.
 echo 📋 Informações de acesso:
-echo    Frontend: http://localhost:8080
+echo    Frontend: http://localhost:8081
 echo    API: http://localhost:8000
 echo    MailHog: http://localhost:8025
 echo.
@@ -105,6 +105,6 @@ echo    Ver logs: docker-compose logs -f
 echo    Parar: docker-compose down
 echo    Reiniciar: docker-compose restart
 echo.
-echo 🚀 Acesse http://localhost:8080 para começar!
+echo 🚀 Acesse http://localhost:8081 para começar!
 
 pause

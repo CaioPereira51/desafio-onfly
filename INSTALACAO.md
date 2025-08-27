@@ -17,24 +17,12 @@ cd desafio
 
 #### No Windows:
 ```cmd
-# Opção 1: Arquivo .bat (recomendado)
+# Arquivo .bat já faz a instalação e configuração
 setup.bat
-
-# Opção 2: PowerShell
-powershell -ExecutionPolicy Bypass -File setup.ps1
-
-# Opção 3: Git Bash (se instalado)
-bash setup.sh
-```
-
-#### No Linux/Mac:
-```bash
-chmod +x setup.sh
-./setup.sh
 ```
 
 ### 3. Acesse a aplicação
-- **Frontend**: http://localhost:8080
+- **Frontend**: http://localhost:8081
 - **API**: http://localhost:8000
 - **MailHog**: http://localhost:8025
 
@@ -42,11 +30,11 @@ chmod +x setup.sh
 
 ### Administrador
 - **Email**: admin@example.com
-- **Senha**: password
+- **Senha**: Admin@123
 
 ### Usuário Comum
 - **Email**: user@example.com
-- **Senha**: password
+- **Senha**: User@123
 
 ## Comandos Úteis
 
@@ -62,13 +50,6 @@ docker-compose restart
 
 # Executar testes
 docker-compose exec api php artisan test
-```
-
-## Solução de Problemas
-
-### Erro de permissão no setup.sh
-```bash
-chmod +x setup.sh
 ```
 
 ### Containers não sobem

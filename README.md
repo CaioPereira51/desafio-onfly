@@ -43,21 +43,6 @@ cd desafio
 cp .env.example .env
 ```
 
-### 3. Execute o setup automatizado
-
-#### Windows:
-```cmd
-# Execute o script de setup
-setup.bat
-```
-
-#### Linux/Mac:
-```bash
-# Torne o script executável e execute
-chmod +x setup.sh
-./setup.sh
-```
-
 #### Instalação manual (qualquer SO):
 ```bash
 # Construa e inicie os containers
@@ -71,7 +56,7 @@ docker-compose exec api php artisan migrate --seed
 ```
 
 ### 4. Acesse a aplicação
-- **Front-end**: http://localhost:8080
+- **Front-end**: http://localhost:8081
 - **API**: http://localhost:8000
 - **Banco de Dados**: localhost:3306
 
@@ -135,11 +120,11 @@ Após executar os seeders, os seguintes usuários estarão disponíveis:
 
 ### Usuário Comum
 - **Email**: user@example.com
-- **Senha**: password
+- **Senha**: User@123
 
 ### Administrador
 - **Email**: admin@example.com
-- **Senha**: password
+- **Senha**: Admin@123
 
 ## 📊 Status dos Pedidos
 
@@ -198,7 +183,3 @@ docker-compose exec api chmod -R 777 storage bootstrap/cache
 - `POST /api/pedidos` - Criar pedido
 - `GET /api/pedidos/{id}` - Consultar pedido
 - `PATCH /api/pedidos/{id}/status` - Atualizar status (admin)
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.

@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api',
-  timeout: 10000,
+  baseURL: 'http://localhost:8000/api',
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -12,6 +12,10 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
+    console.log('🌐 Requisição sendo feita para:', config.url)
+    console.log('📋 Método:', config.method)
+    console.log('📦 Dados:', config.data)
+    
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -19,6 +23,7 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
+    console.error('❌ Erro no interceptor de requisição:', error)
     return Promise.reject(error)
   }
 )
